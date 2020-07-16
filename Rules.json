@@ -9,11 +9,15 @@
         "A1坦克":{
             "Name":"A1Tank",
             "Health":"100",
-            "Weapon":"A1Weapon"
+            "Weapon":"A1Weapon",
+            "Size":1,
+            "Type":"Tank"
         }
     },
     "Weapons":{
-        "Hurt":30,
-        "Warhead":"Standard"
+        "A1Weapon":{
+            "Hurt":30,
+            "Warhead":"Standard"
+        }
     }
 }
