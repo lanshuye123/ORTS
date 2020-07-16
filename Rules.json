@@ -1,0 +1,19 @@
+{
+    "Settings":{
+        "Name":"OnlineRTS Default Game Rules"
+    },
+    "Factions":{
+        
+    },
+    "GameObject":{
+        "A1坦克":{
+            "Name":"A1Tank",
+            "Health":"100",
+            "Weapon":"A1Weapon"
+        }
+    },
+    "Weapons":{
+        "Hurt":30,
+        "Warhead":"Standard"
+    }
+}
