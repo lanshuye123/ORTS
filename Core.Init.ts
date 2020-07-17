@@ -2,10 +2,10 @@ import * as GameCoreClass from "./Core.Class";
 import * as fs from "fs";
 
 
-export var GameObjectRoots:Map<String,GameCoreClass.GameObjectRoot> = new Map();
+export var GameObjectRoots:Map<string,GameCoreClass.GameObjectRoot> = new Map();
 export var RulesSourceData = JSON.parse(fs.readFileSync("./Rules.json").toString());
-export var RulesSourceDataOfGameObjectRoots = RulesSourceData["GameObject"] as Map<String,GameCoreClass.GameObjectRoot>
-export var RulesSourceDataOfGameWeapons = RulesSourceData["Weapons"] as Map<String,GameCoreClass.GameWeapon>;
+export var RulesSourceDataOfGameObjectRoots = RulesSourceData["GameObject"] as Map<string,GameCoreClass.GameObjectRoot>
+export var RulesSourceDataOfGameWeapons = RulesSourceData["Weapons"] as Map<string,GameCoreClass.GameWeapon>;
 
 Object.keys(RulesSourceDataOfGameObjectRoots).forEach((v)=>{
     GameObjectRoots.set(v,new GameCoreClass.GameObjectRoot(RulesSourceDataOfGameObjectRoots[v]))
@@ -17,6 +17,17 @@ GameCoreClass.WeaponsWarhead.set("Standard",new GameCoreClass.GameWeaponWarhead(
     GOR.Health = GOR.Health.valueOf() - GW.Hurt.valueOf() * ( Math.random() + 0.5);
 }));
 
+GameCoreClass.WeaponsWarhead.set("Spawner",new GameCoreClass.GameWeaponWarhead((GOR,GW,ATT)=>{
+    // 生成武器
+    var SpawnGameObjectRoot = GameObjectRoots.get(GW.Spawner_SpawnGameObjectRoot.valueOf());
+    var Spawn = new GameCoreClass.GameObject(SpawnGameObjectRoot,ATT.Bind.Owner);
+}));
+
+GameCoreClass.WeaponsWarhead.set("Kill",new GameCoreClass.GameWeaponWarhead((GOR,GW,ATT)=>{
+    // 一击毙命
+    GOR.Bind.Broken = true;
+}));
+
 Object.keys(RulesSourceDataOfGameWeapons).forEach((v)=>{
-    GameCoreClass.Weapons.set(v,new GameCoreClass.GameWeapon({Hurt:new Number(RulesSourceDataOfGameWeapons[v].Hurt),Warhead:new String(RulesSourceDataOfGameWeapons[v].Warhead)}));
+    GameCoreClass.Weapons.set(v,new GameCoreClass.GameWeapon(RulesSourceDataOfGameWeapons[v.valueOf()]));
 });

@@ -1,5 +1,3 @@
-import { type } from "os";
-
 export var Weapons:Map<string,GameWeapon> = new Map();
 export var WeaponsWarhead:Map<string,GameWeaponWarhead> = new Map();
 export class GameBlock{
@@ -17,10 +15,12 @@ export class GamePlayer{
     Language:GameLanguage;
     Money:Number;
     Factorys:Map<String,Array<GameObject>>;
+    Units:Array<GameObject>;
     constructor(){
         this.Language = new GameLanguage("zh_cn");
         this.Money = 10000;
         this.Factorys = new Map();
+        this.Units = [];
     }
 }
 export class GameLanguage{
@@ -52,7 +52,11 @@ export class GameObjectRoot{
     Size:Number;
     Weapon:String;
     UnderAttack(Weapon:String,Attacker:GameObjectRoot){
+        if(this.Bind.Broken){return;}
         Weapons.get(Weapon.valueOf()).Warhead.Attack(this,Weapons.get(Weapon.valueOf()),Attacker);
+        if(this.Health !> 0){
+            this.Bind.Broken = true;
+        }
     }
     constructor(Loader:GameObjectRoot){
         const that  = Loader;
@@ -69,10 +73,13 @@ export class GameObject{
     Root:GameObjectRoot;
     Owner:GamePlayer;
     Location:GameLocation;
+    Broken:Boolean;
     constructor(Root:GameObjectRoot,Owner:GamePlayer){
         this.Root = new GameObjectRoot(Root);
         this.Root.Bind = this;
         this.Owner = Owner;
+        this.Owner.Units[this.Owner.Units.length] = this;
+        this.Broken = false;
         if(this.Root.Type.valueOf() != "Building"){
             // this.Location = this.Owner.Factorys.get(this.Root.Type.valueOf())[0].Location;
         }
@@ -80,16 +87,19 @@ export class GameObject{
         // this.Location.UsedSize = this.Location.UsedSize.valueOf() + this.Root.Size.valueOf();
     };
     Attack(that:GameObject){
+        if(this.Broken){return;}
         that.Root.UnderAttack(this.Root.Weapon,this.Root)
     }
 }
 export class GameWeapon{
     Hurt:Number;
     Warhead:GameWeaponWarhead;
-    constructor(Loader:{Hurt:Number,Warhead:String}){
+    Spawner_SpawnGameObjectRoot?:String;
+    constructor(Loader:GameWeapon){
         const that = Loader;
         this.Hurt = that.Hurt;
-        this.Warhead = WeaponsWarhead.get(that.Warhead.valueOf());
+        this.Warhead = WeaponsWarhead.get(((that.Warhead as unknown) as String).valueOf());
+        this.Spawner_SpawnGameObjectRoot = that.Spawner_SpawnGameObjectRoot;
     }
 }
 export class GameWeaponWarhead{

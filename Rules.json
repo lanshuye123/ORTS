@@ -8,8 +8,15 @@
     "GameObject":{
         "A1坦克":{
             "Name":"A1Tank",
-            "Health":"100",
+            "Health":100,
             "Weapon":"A1Weapon",
+            "Size":1,
+            "Type":"Tank"
+        },
+        "A2坦克":{
+            "Name":"A2Tank",
+            "Health":200,
+            "Weapon":"A2Weapon",
             "Size":1,
             "Type":"Tank"
         }
@@ -18,6 +25,11 @@
         "A1Weapon":{
             "Hurt":30,
             "Warhead":"Standard"
+        },
+        "A2Weapon":{
+            "Hurt":70,
+            "Spawner_SpawnGameObjectRoot":"A1坦克",
+            "Warhead":"Spawner"
         }
     }
 }
