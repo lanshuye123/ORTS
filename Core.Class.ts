@@ -1,3 +1,5 @@
+import * as fs from "fs";
+
 export var Weapons:Map<string,GameWeapon> = new Map();
 export var WeaponsWarhead:Map<string,GameWeaponWarhead> = new Map();
 export class GameBlock{
@@ -18,7 +20,7 @@ export class GamePlayer{
     Units:Array<GameObject>;
     constructor(){
         this.Language = new GameLanguage("zh_cn");
-        this.Money = 10000;
+        this.Money = 13000;
         this.Factorys = new Map();
         this.Units = [];
     }
@@ -37,7 +39,7 @@ export class GameLanguage{
     }
     constructor(Language:String){
         this.Language = Language;
-        
+        this.Pack = fs.readFileSync(`./Language.${this.Language}.json`);
     }
 }
 export class GameObjectRoot{
@@ -51,6 +53,7 @@ export class GameObjectRoot{
     Bind:GameObject;
     Size:Number;
     Weapon:String;
+    BuildAble?:Boolean;
     UnderAttack(Weapon:String,Attacker:GameObjectRoot){
         if(this.Bind.Broken){return;}
         Weapons.get(Weapon.valueOf()).Warhead.Attack(this,Weapons.get(Weapon.valueOf()),Attacker);
@@ -59,14 +62,15 @@ export class GameObjectRoot{
         }
     }
     constructor(Loader:GameObjectRoot){
-        const that  = Loader;
+        const that     = Loader;
         //定义 that 为 Loader
-        this.Health = new Number(that.Health);
-        this.Cost   = new Number(that.Cost);
-        this.Name   = new String(that.Name);
-        this.Size   = new Number(that.Size);
-        this.Weapon = new String(that.Weapon);
-        this.Type   = new String(that.Type);
+        this.Health    = new Number(that.Health);
+        this.Cost      = new Number(that.Cost);
+        this.Name      = new String(that.Name);
+        this.Size      = new Number(that.Size);
+        this.Weapon    = new String(that.Weapon);
+        this.Type      = new String(that.Type);
+        this.BuildAble = new Boolean(that.BuildAble);
     }
 }
 export class GameObject{
@@ -74,10 +78,15 @@ export class GameObject{
     Owner:GamePlayer;
     Location:GameLocation;
     Broken:Boolean;
+    Health:Number;
+    Leven:Number;
     constructor(Root:GameObjectRoot,Owner:GamePlayer){
         this.Root = new GameObjectRoot(Root);
         this.Root.Bind = this;
+        this.Health = this.Root.Health;
+        this.Leven = 1;
         this.Owner = Owner;
+        this.Owner.Money = this.Owner.Money.valueOf() - this.Root.Cost.valueOf();
         this.Owner.Units[this.Owner.Units.length] = this;
         this.Broken = false;
         if(this.Root.Type.valueOf() != "Building"){

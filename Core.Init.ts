@@ -13,8 +13,8 @@ Object.keys(RulesSourceDataOfGameObjectRoots).forEach((v)=>{
 // 弹头是代码里面写好的
 GameCoreClass.WeaponsWarhead.set("Standard",new GameCoreClass.GameWeaponWarhead((GOR,GW,ATT)=>{
     // 标准武器弹头
-    // 被攻击.血量 = 被攻击.血量 - 武器.伤害 * 随机(0.5,1.5)
-    GOR.Health = GOR.Health.valueOf() - GW.Hurt.valueOf() * ( Math.random() + 0.5);
+    // 被攻击.血量 = 被攻击.血量 - 武器.伤害 * 随机(0.75,1.25)
+    GOR.Bind.Health = GOR.Bind.Health.valueOf() - GW.Hurt.valueOf() * ( Math.random() + 0.25);
 }));
 
 GameCoreClass.WeaponsWarhead.set("Spawner",new GameCoreClass.GameWeaponWarhead((GOR,GW,ATT)=>{
